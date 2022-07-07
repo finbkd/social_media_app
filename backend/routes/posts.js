@@ -15,10 +15,10 @@ router.post("/", async (req, res) => {
   }
 });
 
-//M/ GET A TIMELINE POSTS OF CURRENTLY LOGGED IN USER
-router.get("/timeline", async (req, res) => {
+//M/ GET A TIMELINE POSTS OF PAGE THAT WE ARE VISITING
+router.get("/timeline/:userId", async (req, res) => {
   try {
-    const currentUser = await User.findById(req.body.userId);
+    const currentUser = await User.findById(req.params.userId);
     if (!currentUser) {
       res.status(500).json(err);
     }
@@ -90,6 +90,16 @@ router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.get("/profile/:username", async (req, res) => {
+  try {
+    const user = await User.findOne({ userName: req.params.username });
+    const posts = await Post.find({ userId: user._id });
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
   }
